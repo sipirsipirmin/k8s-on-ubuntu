@@ -1,0 +1,60 @@
+- name: Install dependencies
+  apt:
+    pkg:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    update_cache: yes
+
+- name: google cert
+  shell: sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: apt repo
+  shell: echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+
+- name: Install kube*
+  apt:
+    pkg:
+    - kubelet 
+    - kubeadm 
+    - kubectl
+    update_cache: yes
+
+
+- name: init cluster
+  shell: kubeadm init --v=5 >> cluster_initialized.txt
+  args:
+    chdir: $HOME
+    creates: cluster_initialized.txt
+
+
+- name: Create a directory if it does not exist
+  file:
+    path: $HOME/.kube/
+    state: directory
+    mode: '0755'
+
+
+- name: Copy admin conf to .kube/config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: $HOME/.kube/config
+    remote_src: yes
+
+
+- name: network plugin installation(living on edge)
+  shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+# - name: Get weave manifest
+#   shell: curl https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n') -o weave.yaml
+#   args:
+#     chdir: /tmp
+#     creates: weave.yaml
+    
+
+# - name: Apply weave manifest to the cluster.
+#   community.kubernetes.k8s:
+#     state: present
+#     src: /tmp/weave.yaml
+

@@ -1,0 +1,22 @@
+- name: Add the br_netfilter module
+  modprobe:
+    name: br_netfilter
+    state: present
+
+
+- name: enable bridge
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+  
+- name:  enable bridge
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes

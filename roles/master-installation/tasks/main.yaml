@@ -1,27 +1,3 @@
-- name: Install dependencies
-  apt:
-    pkg:
-    - apt-transport-https
-    - ca-certificates
-    - curl
-    update_cache: yes
-
-- name: google cert
-  shell: sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-
-- name: apt repo
-  shell: echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-
-
-- name: Install kube*
-  apt:
-    pkg:
-    - kubelet 
-    - kubeadm 
-    - kubectl
-    update_cache: yes
-
-
 - name: init cluster
   shell: kubeadm init --v=5 >> cluster_initialized.txt
   args:

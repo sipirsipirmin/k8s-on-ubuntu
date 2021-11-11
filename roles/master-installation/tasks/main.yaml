@@ -22,15 +22,7 @@
 - name: network plugin installation(living on edge)
   shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
-# - name: Get weave manifest
-#   shell: curl https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n') -o weave.yaml
-#   args:
-#     chdir: /tmp
-#     creates: weave.yaml
-    
+- name: alias k to kubectl
+  shell: echo "alias k=kubectl">> /root/.bashrc
 
-# - name: Apply weave manifest to the cluster.
-#   community.kubernetes.k8s:
-#     state: present
-#     src: /tmp/weave.yaml
 
